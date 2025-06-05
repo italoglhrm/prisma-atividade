@@ -68,3 +68,9 @@ model Entrega {
   pedidoId            Int    @unique
   pedido              Pedido @relation(fields: [pedidoId], references: [id])
 }
+
+enum Status {
+  pendente
+  emTransito
+  entregue
+}
