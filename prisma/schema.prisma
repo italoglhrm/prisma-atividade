@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -27,8 +20,8 @@ model Cafe {
 model TagCafe {
   id     Int    @id @default(autoincrement())
   nome   String
+  cafe   Cafe   @relation(fields: [cafeId], references: [id], onDelete: Cascade)
   cafeId Int
-  cafe   Cafe   @relation(fields: [cafeId], references: [id])
 }
 
 model Cliente {
@@ -42,31 +35,31 @@ model Cliente {
 
 model Pedido {
   id          Int          @id @default(autoincrement())
+  cliente     Cliente      @relation(fields: [clienteId], references: [id])
   clienteId   Int
   dataPedido  String
   totalPedido Float
+  itens       ItemPedido[]
   entrega     Entrega?
-  itensPedido ItemPedido[]
-  cliente     Cliente      @relation(fields: [clienteId], references: [id])
 }
 
 model ItemPedido {
   id            Int    @id @default(autoincrement())
+  cafe          Cafe   @relation(fields: [cafeId], references: [id])
   cafeId        Int
   quantidade    Int
   precoUnitario Float
-  pedidoId      Int
   pedido        Pedido @relation(fields: [pedidoId], references: [id])
-  cafe          Cafe   @relation(fields: [cafeId], references: [id])
+  pedidoId      Int
 }
 
 model Entrega {
   id                  Int    @id @default(autoincrement())
   enderecoEntrega     String
-  status              String
+  status              Status
   dataPrevisaoEntrega String
-  pedidoId            Int    @unique
   pedido              Pedido @relation(fields: [pedidoId], references: [id])
+  pedidoId            Int    @unique
 }
 
 enum Status {
